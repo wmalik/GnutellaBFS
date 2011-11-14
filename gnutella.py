@@ -1,3 +1,9 @@
+# Authors:	Ying Liu
+#		Wasif Riaz Malik	
+# Mini homework for Advanced Distributed Systems Course
+# EMDC KTH 2011
+
+
 import random
 
 DEBUG = False
