@@ -7,6 +7,7 @@
 import random
 
 DEBUG = False
+DATAFILE = "p2p-Gnutella31.txt"
 
 # Loads a graph from a filename
 def load_graph(fname):
@@ -49,9 +50,9 @@ def WIS_WR(graph, n):
 def runBFS(sample_size, graph, sampling_type):
 	
 	if sampling_type == 'UIS_WR':
-		starting_nodes = UIS_WR(G, 100)
+		starting_nodes = UIS_WR(G, 1)
 	if sampling_type == 'WIS_WR':
-		starting_nodes = WIS_WR(G, 100)
+		starting_nodes = WIS_WR(G, 1)
 		
 	totalsum = 0
 	for i in starting_nodes:
@@ -61,7 +62,7 @@ def runBFS(sample_size, graph, sampling_type):
 	print output_str
 
 
-# Basic BFS function
+# Basic BFS function - returns the average degree of nodes
 def BFS(sample_size, graph, starting_node):
 
 	nodesList = list()
@@ -71,23 +72,27 @@ def BFS(sample_size, graph, starting_node):
 			break;
 	
 	
+	#BFS logic
 	index = 0
 	while len(nodesList) < sample_size:
 		neighbours = graph[nodesList[index]]
 		for i in neighbours:
-			if i not in starting_node:
+			#print 'i:'+str(i)
+			if i not in nodesList:
 				nodesList.append(i)
 			if len(nodesList) >= sample_size:
 				break;
 		index += 1
+		
 
 	
-	##### get children of starting_node
+	##### calculate the average with n = sample_size
 	totalsum = 0
 	avg = 0
 	for elements in nodesList:
 		totalsum += len(graph[elements])
-	avg = totalsum/sample_size
+	avg = totalsum/len(nodesList)
+	totalsum = 0
 	
 	if DEBUG == True:
 		outputstr = 'BFS Average: ' + str(avg)
@@ -96,17 +101,36 @@ def BFS(sample_size, graph, starting_node):
 	return avg
 
 
-
-
+# Calculates the actual average of the dataset
+def actualAverage(graph):
+	mysum = 0
+	for i in graph:
+		mysum += len(graph[i])
+	print '** Actual_Average_Degree: ' +str(mysum/len(graph))
 	
+
+# startup message
+def startupMessage(G):
+	print "\n\n"
+	print "** Dataset: " + DATAFILE
+	print '** Num_nodes_in_dataset: ' + str(len(G))
+	actualAverage(G)
+	print "\n\n"
+
+
+
 # Load the graph
-G = load_graph("p2p-Gnutella31.txt")
+G = load_graph(DATAFILE)
+
+
+# print some stuff about the dataset
+startupMessage(G);
 
 # Run the BFS using UIS_WR
-for x in range(20, 5000, 500):
+for x in range(10, 60000, 10000):
 	runBFS(x, G, 'UIS_WR')
 
 
 # Run the BFS using WIS_WR
-for x in range(20, 5000, 500):
+for x in range(10, 60000, 10000):
 	runBFS(x, G, 'WIS_WR')
